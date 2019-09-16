@@ -14,8 +14,7 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
-    implementation("org.codehaus.jackson:jackson-mapper-asl:version:1.9.13")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.8.11")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.9")
     implementation("net.sf.opencsv:opencsv:2.3")
     testCompile ("junit:junit:4.12")
 }
