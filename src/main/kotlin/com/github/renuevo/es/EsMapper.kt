@@ -1,5 +1,4 @@
-package kr.co.saramin.lab.common
-
+package com.github.renuevo.es
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode

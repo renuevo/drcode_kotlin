@@ -17,7 +17,7 @@ buildScan{
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 publishing {
