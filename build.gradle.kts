@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    'build-scan'
+    `build-scan`
     `maven-publish`
     kotlin("jvm") version "1.3.50"
 }
@@ -9,20 +9,21 @@ plugins {
 group = "com.github"
 version = "1.0"
 
-repositories {
-    mavenCentral()
+buildScan{
+    termsOfServiceUrl = "https://gradle.com/terms-of-service"
+    termsOfServiceAgree = "yes"
+
+    publishAlways()
 }
 
-buildScan{
-    termsOfServiceAgree = "yes"
-    publishAlways()
+repositories {
+    jcenter()
 }
 
 publishing {
     publications {
         create<MavenPublication>("default") {
             from(components["java"])
-            artifact(dokkaJar)
         }
     }
     repositories {

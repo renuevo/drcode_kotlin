@@ -33,8 +33,7 @@ object EsQueryBuilder {
     }
 
     private fun queryTokenizer(query: String): Array<String> {
-        var queryToken = query
-        queryToken = query.replace("(?:/\\*(?:[^*]|(?:\\*+[^*/]))*\\*+/)|(?://.*)".toRegex(), "")
+        var queryToken = query.replace("(?:/\\*(?:[^*]|(?:\\*+[^*/]))*\\*+/)|(?://.*)".toRegex(), "")
         return queryToken.split("§[^§]+§".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
     }
 
