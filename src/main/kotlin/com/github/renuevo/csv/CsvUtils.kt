@@ -8,6 +8,7 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
+import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.isSupertypeOf
@@ -81,15 +82,14 @@ class CsvUtils {
         return resultList
     }
 
-    fun <T> readModelCsv(path: String, charsetName: String, classType: Class<T>): List<T> {
+    fun <T : Any> readModelCsv(path: String, charsetName: String, classType: KClass<T>): List<T> {
         var pathStr = path
-        val memberMap = VoMapperUtils.getMembers(classType::class)
+        val memberMap = VoMapperUtils.getMembers(classType)
 
         if (!path.substring(path.length - 4).equals(".csv", ignoreCase = true))
             pathStr += ".csv"
 
         val resultList = ArrayList<T>()
-
 
         var csvLine: Array<String>
         var csvTitle: Array<String>
@@ -103,7 +103,7 @@ class CsvUtils {
 
             while (true) {
                 csvLine = csvReader.readNext() ?: break
-                classTemplate = classType.newInstance()
+                classTemplate = classType.java.newInstance()
                 csvTitle.indices.forEach { idx ->
                     if (memberMap[csvTitle[idx]]?.returnType?.isSupertypeOf(Int::class.createType())!!)
                         memberMap[csvTitle[idx]]?.setter?.call(classTemplate, csvLine[idx].toInt())
@@ -117,7 +117,7 @@ class CsvUtils {
         return resultList
     }
 
-    fun <T> writeCsv(list: List<T>, path: String, charsetName: String, classType: Class<T>) {
+    fun <T : Any> writeCsv(list: List<T>, path: String, charsetName: String, classType: KClass<T>) {
 
         var pathStr = path
         if (!path.substring(path.length - 4).equals(".csv", ignoreCase = true))
@@ -135,7 +135,7 @@ class CsvUtils {
         CSVWriter(OutputStreamWriter(outputStream)).use {
 
             //제목 라인 input
-            val fields = classType.declaredFields
+            val fields = classType.java.declaredFields
             val outStrings = arrayOfNulls<String>(fields.size)
             val methodNames = arrayOfNulls<String>(fields.size)
             for (i in fields.indices) {
@@ -146,14 +146,14 @@ class CsvUtils {
 
             for (objectData in list) {
                 for (i in fields.indices) {
-                    outStrings[i] = classType.getDeclaredMethod(methodNames[i]).invoke(objectData).toString()
+                    outStrings[i] = classType.java.getDeclaredMethod(methodNames[i]).invoke(objectData).toString()
                 }
                 it.writeNext(outStrings)
             }
         }
     }
 
-    fun <T> writeCsv(writeMap: Map<String, List<T>>, path: String, charsetName: String, classType: Class<T>) {
+    fun <T : Any> writeCsv(writeMap: Map<String, List<T>>, path: String, charsetName: String, classType: KClass<T>) {
         var pathStr = path
 
         if (!path.substring(path.length - 4).equals(".csv", ignoreCase = true))
@@ -171,7 +171,7 @@ class CsvUtils {
         CSVWriter(OutputStreamWriter(outputStream)).use {
 
             //제목 라인 input
-            val fields = classType.declaredFields
+            val fields = classType.java.declaredFields
             val outStrings = arrayOfNulls<String>(fields.size)
             val methodNames = arrayOfNulls<String>(fields.size)
             for (i in fields.indices) {
@@ -183,14 +183,13 @@ class CsvUtils {
             for (key in writeMap.keys) {
                 for (objectData in writeMap.getValue(key)) {
                     for (i in fields.indices) {
-                        outStrings[i] = classType.getDeclaredMethod(methodNames[i]).invoke(objectData) as String
+                        outStrings[i] = classType.java.getDeclaredMethod(methodNames[i]).invoke(objectData) as String
                     }
                     it.writeNext(outStrings)
                 }
             }
         }
     }
-
 
     fun writeCsv(map: Map<String, String>, path: String, charsetName: String, keyTitle: String, valueTitle: String) {
         var pathStr = path
