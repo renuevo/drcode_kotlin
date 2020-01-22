@@ -103,7 +103,7 @@ class CsvUtils {
 
             while (true) {
                 csvLine = csvReader.readNext() ?: break
-                classTemplate = classType.java.newInstance()
+                classTemplate = classType.java.getDeclaredConstructor().newInstance()
                 csvTitle.indices.forEach { idx ->
                     if (memberMap[csvTitle[idx]]?.returnType?.isSupertypeOf(Int::class.createType())!!)
                         memberMap[csvTitle[idx]]?.setter?.call(classTemplate, csvLine[idx].toInt())
